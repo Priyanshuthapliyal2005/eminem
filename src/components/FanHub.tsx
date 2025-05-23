@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Heart, Share2, MessageCircle, Star, Users, Trophy } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, Share2, MessageCircle, Star, Users, Trophy, Award, Zap, Crown, Camera, Palette, Music } from 'lucide-react';
 
 interface FanArt {
   id: number;

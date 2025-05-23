@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Calendar, Music, Award, ChevronRight } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { Play, Calendar, Music, Award, ChevronRight, Headphones, Heart, Share2, Download, Star } from 'lucide-react';
 
 // Album type definition
 interface Album {
@@ -81,32 +81,77 @@ const albums: Album[] = [
 
 const DiscographyTimeline: React.FC = () => {
   const [activeAlbum, setActiveAlbum] = useState<Album | null>(null);
+  const [hoveredAlbum, setHoveredAlbum] = useState<number | null>(null);
+  const [likedAlbums, setLikedAlbums] = useState<Set<number>>(new Set());
+  const [playingTrack, setPlayingTrack] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const timelineProgress = useTransform(scrollYProgress, [0, 1], [0, 100]);
+
+  const toggleLike = (albumId: number) => {
+    const newLiked = new Set(likedAlbums);
+    if (newLiked.has(albumId)) {
+      newLiked.delete(albumId);
+    } else {
+      newLiked.add(albumId);
+    }
+    setLikedAlbums(newLiked);
+  };
+
+  const playTrack = (trackName: string) => {
+    setPlayingTrack(playingTrack === trackName ? null : trackName);
+  };
 
   return (
-    <section id="discography" className="section-container bg-gradient-to-b from-black via-gray-900 to-black relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 opacity-10">
-        {[...Array(20)].map((_, i) => (
+    <section ref={containerRef} id="discography" className="section-container bg-gradient-to-b from-black via-gray-900 to-black relative overflow-hidden">
+      {/* Dynamic parallax background */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-black/40"
+        style={{ y: backgroundY }}
+      />
+      
+      {/* Floating music notes animation */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-4 h-4 bg-red-500 rounded-full"
+            className="absolute text-red-500/20 text-2xl font-bold"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              scale: [0, 1, 0],
-              rotate: [0, 180, 360],
-              opacity: [0, 0.3, 0],
+              y: [-20, -100, -20],
+              rotate: [0, 360],
+              opacity: [0, 0.6, 0],
+              scale: [0.5, 1.2, 0.5],
             }}
             transition={{
-              duration: 4 + Math.random() * 2,
+              duration: 6 + Math.random() * 4,
               repeat: Infinity,
               delay: Math.random() * 3,
+              ease: "easeInOut"
             }}
-          />
+          >
+            ♪
+          </motion.div>
         ))}
       </div>
+
+      {/* Progress timeline indicator */}
+      <motion.div 
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-red-500 to-red-700 z-30"
+        style={{ 
+          width: `${timelineProgress.get()}%`,
+          scaleX: timelineProgress 
+        }}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -139,6 +184,8 @@ const DiscographyTimeline: React.FC = () => {
                 index % 2 === 0 ? 'lg:mb-20' : 'lg:mt-20'
               }`}
               onClick={() => setActiveAlbum(album === activeAlbum ? null : album)}
+              onHoverStart={() => setHoveredAlbum(album.id)}
+              onHoverEnd={() => setHoveredAlbum(null)}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -147,7 +194,7 @@ const DiscographyTimeline: React.FC = () => {
               {/* Timeline dot */}
               <div className="hidden lg:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-red-500 rounded-full border-4 border-black z-20 group-hover:scale-150 transition-all duration-300"></div>
               
-              <div className="relative overflow-hidden rounded-xl bg-black border-2 border-gray-800 group-hover:border-red-500 transition-all duration-300 shadow-2xl">
+              <div className="relative overflow-hidden rounded-xl bg-black border-2 border-gray-800 group-hover:border-red-500 transition-all duration-300 shadow-2xl backdrop-blur-sm">
                 <div className="relative aspect-square overflow-hidden">
                   <img 
                     src={album.cover} 
@@ -155,25 +202,91 @@ const DiscographyTimeline: React.FC = () => {
                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110"
                   />
                   
-                  {/* Overlay gradient */}
+                  {/* Dynamic overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-all duration-300"></div>
                   
-                  {/* Play button overlay */}
+                  {/* Interactive controls overlay */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <motion.div
-                      className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Play className="w-6 h-6 text-white ml-1" fill="currentColor" />
-                    </motion.div>
+                    <div className="flex items-center gap-3">
+                      <motion.button
+                        className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Play album functionality
+                        }}
+                      >
+                        <Play className="w-5 h-5 text-white ml-1" fill="currentColor" />
+                      </motion.button>
+                      
+                      <motion.button
+                        className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all ${
+                          likedAlbums.has(album.id) 
+                            ? 'bg-red-600 text-white' 
+                            : 'bg-black/70 text-white hover:bg-red-600'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleLike(album.id);
+                        }}
+                      >
+                        <Heart className="w-4 h-4" fill={likedAlbums.has(album.id) ? "currentColor" : "none"} />
+                      </motion.button>
+                      
+                      <motion.button
+                        className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-700 transition-all"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Share functionality
+                        }}
+                      >
+                        <Share2 className="w-4 h-4 text-white" />
+                      </motion.button>
+                    </div>
                   </div>
                   
                   {/* Album info overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                     <h3 className="heading-text text-xl text-white mb-1 drop-shadow-lg">{album.title}</h3>
-                    <div className="flex items-center gap-2 text-red-400">
-                      <Calendar className="w-4 h-4" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-red-400">
+                        <Calendar className="w-4 h-4" />
+                        <span className="text-sm">{album.year}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-300">
+                        <Music className="w-4 h-4" />
+                        <span className="text-xs">{album.tracks.length} tracks</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Popularity indicator */}
+                  <div className="absolute top-4 right-4">
+                    <div className="flex items-center gap-1 bg-black/70 rounded-full px-2 py-1">
+                      <Star className="w-3 h-3 text-yellow-400" fill="currentColor" />
+                      <span className="text-xs text-white">
+                        {Math.floor(Math.random() * 5) + 3}.{Math.floor(Math.random() * 10)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Enhanced hover effect */}
+                {hoveredAlbum === album.id && (
+                  <motion.div
+                    className="absolute inset-0 border-2 border-red-500 rounded-xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    style={{
+                      boxShadow: '0 0 30px rgba(239, 68, 68, 0.6)',
+                    }}
+                  />
+                )}
                       <span className="text-sm font-semibold">{album.year}</span>
                     </div>
                   </div>
