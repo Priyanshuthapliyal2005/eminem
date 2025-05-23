@@ -1,38 +1,51 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Howl } from 'howler';
 
 const HeroSection: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [userInteracted, setUserInteracted] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true
   });
 
-  const backgroundMusic = new Howl({
-    src: ['https://audio-samples.github.io/samples/mp3/loop.mp3'],
-    loop: true,
-    volume: 0.1,
-    html5: true
-  });
-
   useEffect(() => {
+    // Handle user interaction for autoplay policies
+    const handleUserInteraction = () => {
+      setUserInteracted(true);
+      if (videoRef.current && videoLoaded) {
+        videoRef.current.play().catch(error => {
+          console.error("Video autoplay failed:", error);
+        });
+      }
+    };
+
+    // Add event listeners for user interaction
+    document.addEventListener('click', handleUserInteraction, { once: true });
+    document.addEventListener('touchstart', handleUserInteraction, { once: true });
+
     if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.error("Video autoplay failed:", error);
+      // Set loading strategy for better performance
+      videoRef.current.preload = 'metadata';
+      
+      const video = videoRef.current;
+      video.addEventListener('loadeddata', () => {
+        setVideoLoaded(true);
+        if (userInteracted) {
+          video.play().catch(error => {
+            console.error("Video autoplay failed:", error);
+          });
+        }
       });
     }
 
-    // Start playing background music when in view
-    if (inView) {
-      backgroundMusic.play();
-    }
-
     return () => {
-      backgroundMusic.unload();
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
     };
-  }, [inView]);
+  }, [inView, userInteracted, videoLoaded]);
 
   return (
     <section id="home" className="relative h-screen w-full overflow-hidden" ref={ref}>
@@ -62,7 +75,7 @@ const HeroSection: React.FC = () => {
         ))}
       </div>
 
-      {/* Background Video */}
+      {/* Background Video - Optimized for performance */}
       <video
         ref={videoRef}
         className="absolute top-0 left-0 w-full h-full object-cover opacity-30"
@@ -70,7 +83,11 @@ const HeroSection: React.FC = () => {
         muted
         loop
         playsInline
+        preload="metadata"
+        onLoadStart={() => console.log('Video loading started')}
+        onCanPlay={() => console.log('Video ready to play')}
       >
+        <source src="/e.mp4" type="video/mp4" />
         <source src="https://player.vimeo.com/external/368244127.sd.mp4?s=12a14051e6417ed5c970d7bad32374de3216afb2&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
         Your browser does not support the video tag.
       </video>

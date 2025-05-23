@@ -83,83 +83,236 @@ const DiscographyTimeline: React.FC = () => {
   const [activeAlbum, setActiveAlbum] = useState<Album | null>(null);
 
   return (
-    <section id="discography" className="section-container concrete-bg">
-      <h2 className="section-title">DISCOGRAPHY</h2>
-      
-      <div className="mb-8 max-w-3xl mx-auto">
-        <p className="text-center text-lg">
-          Explore Eminem's legendary catalog spanning over 25 years of hip-hop history, from his underground beginnings to global dominance.
-        </p>
+    <section id="discography" className="section-container bg-gradient-to-b from-black via-gray-900 to-black relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-10">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-4 h-4 bg-red-500 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              scale: [0, 1, 0],
+              rotate: [0, 180, 360],
+              opacity: [0, 0.3, 0],
+            }}
+            transition={{
+              duration: 4 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          />
+        ))}
       </div>
-      
-      {/* Album timeline */}
-      <div className="relative">
-        {/* Timeline line */}
-        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-primary"></div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10"
+      >
+        <h2 className="section-title text-center mb-6">DISCOGRAPHY</h2>
         
-        {/* Albums slider */}
-        <div className="overflow-x-auto pb-8 md:pb-0">
-          <div className="flex md:flex-wrap md:justify-center gap-6 min-w-max md:min-w-0 px-4">
-            {albums.map((album) => (
-              <div 
-                key={album.id}
-                className="relative flex-shrink-0 w-48 group cursor-pointer"
-                onClick={() => setActiveAlbum(album === activeAlbum ? null : album)}
-              >
-                <div className="relative overflow-hidden rounded-lg bg-black border-2 border-transparent group-hover:border-primary transition-all duration-300">
+        <div className="mb-12 max-w-4xl mx-auto text-center">
+          <p className="text-lg text-gray-300 leading-relaxed">
+            Explore Eminem's legendary catalog spanning over 25 years of hip-hop history, 
+            from his underground beginnings to global dominance. Each album tells a chapter 
+            of his extraordinary journey.
+          </p>
+        </div>
+      </motion.div>
+      
+      {/* Enhanced Album timeline */}
+      <div className="relative max-w-7xl mx-auto">
+        {/* Dynamic timeline line */}
+        <div className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-red-500 to-red-700 rounded-full shadow-lg"></div>
+        
+        {/* Albums grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+          {albums.map((album, index) => (
+            <motion.div 
+              key={album.id}
+              className={`relative group cursor-pointer ${
+                index % 2 === 0 ? 'lg:mb-20' : 'lg:mt-20'
+              }`}
+              onClick={() => setActiveAlbum(album === activeAlbum ? null : album)}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              {/* Timeline dot */}
+              <div className="hidden lg:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-red-500 rounded-full border-4 border-black z-20 group-hover:scale-150 transition-all duration-300"></div>
+              
+              <div className="relative overflow-hidden rounded-xl bg-black border-2 border-gray-800 group-hover:border-red-500 transition-all duration-300 shadow-2xl">
+                <div className="relative aspect-square overflow-hidden">
                   <img 
                     src={album.cover} 
                     alt={album.title} 
-                    className="w-full h-48 object-cover opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110"
                   />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
-                    <h3 className="heading-text text-lg text-white">{album.title}</h3>
-                    <p className="text-gray-300 text-sm">{album.year}</p>
+                  
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-all duration-300"></div>
+                  
+                  {/* Play button overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <motion.div
+                      className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Play className="w-6 h-6 text-white ml-1" fill="currentColor" />
+                    </motion.div>
+                  </div>
+                  
+                  {/* Album info overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="heading-text text-xl text-white mb-1 drop-shadow-lg">{album.title}</h3>
+                    <div className="flex items-center gap-2 text-red-400">
+                      <Calendar className="w-4 h-4" />
+                      <span className="text-sm font-semibold">{album.year}</span>
+                    </div>
                   </div>
                 </div>
                 
-                {/* Animated record */}
-                <div className="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-black border-2 border-primary flex items-center justify-center overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <div className="record w-full h-full bg-black">
-                    <div className="h-full w-full bg-primary opacity-50 rounded-full flex items-center justify-center">
-                      <div className="w-3 h-3 rounded-full bg-black"></div>
+                {/* Album stats */}
+                <div className="p-4 bg-gray-900">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <Music className="w-4 h-4" />
+                      <span className="text-sm">{album.tracks.length} tracks</span>
+                    </div>
+                    <motion.button
+                      className="flex items-center gap-1 text-red-500 text-sm hover:text-red-400 transition-colors"
+                      whileHover={{ x: 2 }}
+                    >
+                      Details
+                      <ChevronRight className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Animated vinyl record */}
+              <motion.div 
+                className="absolute -top-3 -right-3 w-12 h-12 rounded-full bg-black border-2 border-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              >
+                <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-black"></div>
+                </div>
+              </motion.div>
+            </motion.div>
+          ))}
+        </div>
+        
+        {/* Enhanced Album details modal */}
+        <AnimatePresence>
+          {activeAlbum && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="mt-12 bg-black bg-opacity-95 backdrop-blur-sm p-8 rounded-2xl border border-red-600 border-opacity-30 shadow-2xl max-w-6xl mx-auto"
+            >
+              <div className="flex flex-col lg:flex-row gap-8">
+                <div className="lg:w-1/3">
+                  <motion.img 
+                    src={activeAlbum.cover} 
+                    alt={activeAlbum.title}
+                    className="w-full h-auto rounded-xl shadow-2xl border-2 border-red-600 border-opacity-50" 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  
+                  {/* Album actions */}
+                  <div className="mt-6 space-y-3">
+                    <motion.button
+                      className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Play className="w-5 h-5" fill="currentColor" />
+                      Play Album
+                    </motion.button>
+                    
+                    <div className="flex gap-3">
+                      <button className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors">
+                        Add to Playlist
+                      </button>
+                      <button className="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors">
+                        Share
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="lg:w-2/3">
+                  <div className="flex items-start justify-between mb-6">
+                    <div>
+                      <h3 className="heading-text text-3xl lg:text-4xl text-red-500 mb-2">{activeAlbum.title}</h3>
+                      <div className="flex items-center gap-4 text-gray-400">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-5 h-5" />
+                          <span className="text-lg">{activeAlbum.year}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Music className="w-5 h-5" />
+                          <span>{activeAlbum.tracks.length} tracks</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Award className="w-5 h-5" />
+                          <span>Platinum</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <motion.button
+                      className="text-gray-400 hover:text-white text-2xl"
+                      onClick={() => setActiveAlbum(null)}
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      ×
+                    </motion.button>
+                  </div>
+                  
+                  <p className="text-gray-300 leading-relaxed mb-8 text-lg">{activeAlbum.description}</p>
+                  
+                  <div>
+                    <h4 className="heading-text text-xl mb-6 text-red-500 flex items-center gap-2">
+                      <Music className="w-5 h-5" />
+                      TRACKLIST
+                    </h4>
+                    <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {activeAlbum.tracks.map((track, index) => (
+                          <motion.div
+                            key={index}
+                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 hover:bg-opacity-50 transition-all duration-200 group cursor-pointer"
+                            whileHover={{ x: 5 }}
+                          >
+                            <span className="text-red-500 font-bold w-6 text-center">{index + 1}</span>
+                            <span className="group-hover:text-white transition-colors">{track}</span>
+                            <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Play className="w-4 h-4 text-red-500" />
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Album details */}
-        {activeAlbum && (
-          <div className="mt-8 bg-black bg-opacity-80 p-6 rounded-lg border border-gray-800 max-w-4xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="md:w-1/3">
-                <img 
-                  src={activeAlbum.cover} 
-                  alt={activeAlbum.title}
-                  className="w-full h-auto rounded-lg shadow-lg" 
-                />
-              </div>
-              <div className="md:w-2/3">
-                <h3 className="heading-text text-2xl md:text-3xl text-primary mb-2">{activeAlbum.title}</h3>
-                <p className="text-gray-400 mb-4">{activeAlbum.year}</p>
-                <p className="mb-4">{activeAlbum.description}</p>
-                
-                <h4 className="heading-text text-xl mb-2">TRACKLIST:</h4>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                  {activeAlbum.tracks.map((track, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <span className="text-primary">{index + 1}.</span>
-                      <span>{track}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

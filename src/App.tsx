@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import DiscographyTimeline from './components/DiscographyTimeline';
@@ -10,6 +10,9 @@ import MultimediaGallery from './components/MultimediaGallery';
 import Footer from './components/Footer';
 import AudioPlayer from './components/AudioPlayer';
 import { Loader } from './components/Loader';
+import MediaOptimizer from './components/MediaOptimizer';
+import BackgroundAudio from './components/BackgroundAudio';
+import MediaTip from './components/MediaTip';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -28,20 +31,24 @@ function App() {
   }
 
   return (
-    <div className="bg-black text-white min-h-screen overflow-x-hidden">
-      <Header />
-      <main>
-        <HeroSection />
-        <DiscographyTimeline />
-        <Biography />
-        <AwardsWall />
-        <SobrietySection />
-        <FanHub />
-        <MultimediaGallery />
-      </main>
-      <Footer />
-      <AudioPlayer />
-    </div>
+    <MediaOptimizer>
+      <div className="bg-gradient-to-br from-black via-gray-900 to-black text-white min-h-screen overflow-x-hidden">
+        <Header />
+        <main className="relative">
+          <HeroSection />
+          <DiscographyTimeline />
+          <Biography />
+          <AwardsWall />
+          <SobrietySection />
+          <FanHub />
+          <MultimediaGallery />
+        </main>
+        <Footer />
+        <AudioPlayer />
+        <BackgroundAudio />
+        <MediaTip />
+      </div>
+    </MediaOptimizer>
   );
 }
 

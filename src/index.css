@@ -109,6 +109,149 @@ body {
   .button-primary {
     @apply heading-text bg-primary hover:bg-red-800 text-white px-6 py-2 text-lg tracking-wider transition-all hover-scale;
   }
+
+  /* Custom scrollbar styles */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+  }
+
+  /* Enhanced gradient backgrounds */
+  .gradient-bg-1 {
+    background: linear-gradient(135deg, #000000 0%, #1a0000 50%, #000000 100%);
+  }
+
+  .gradient-bg-2 {
+    background: linear-gradient(45deg, #000000 0%, #330000 25%, #000000 50%, #1a0000 75%, #000000 100%);
+  }
+
+  /* Enhanced button styles */
+  .btn-modern {
+    @apply relative overflow-hidden bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+  }
+
+  .btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-modern:hover::before {
+    left: 100%;
+  }
+
+  /* Glass morphism effect */
+  .glass-effect {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Performance optimizations for media */
+  .media-optimized video {
+    transform: translateZ(0);
+    will-change: opacity;
+    backface-visibility: hidden;
+  }
+
+  .media-optimized.low-performance video {
+    opacity: 0.2;
+    filter: blur(1px);
+  }
+
+  .media-optimized.high-performance video {
+    opacity: var(--video-quality, 0.3);
+  }
+
+  /* Lazy loading optimization */
+  .media-optimized img[data-src] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .media-optimized img[data-loaded="true"] {
+    opacity: 1;
+  }
+
+  /* Connection-based optimizations */
+  .media-optimized[data-connection="slow-2g"] video,
+  .media-optimized[data-connection="2g"] video {
+    display: none;
+  }
+
+  .media-optimized[data-connection="slow-2g"] .animated-particles,
+  .media-optimized[data-connection="2g"] .animated-particles {
+    animation-duration: 6s;
+    opacity: 0.3;
+  }
+
+  /* Reduce animations on low-performance devices */
+  .media-optimized.low-performance .animated-particles {
+    animation-duration: var(--animation-duration, 6s);
+    opacity: 0.2;
+  }
+
+  /* Background video optimizations */
+  .media-optimized video {
+    object-fit: cover;
+    object-position: center;
+    filter: contrast(1.1) brightness(0.9);
+  }
+
+  /* Audio optimization */
+  .media-optimized audio {
+    display: none; /* Hide audio elements for cleaner UI */
+  }
+
+  /* Audio player slider styles */
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    background: #ef4444;
+    cursor: pointer;
+    border: 2px solid #000;
+  }
+
+  .slider::-moz-range-thumb {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    background: #ef4444;
+    cursor: pointer;
+    border: 2px solid #000;
+  }
+
+  .slider::-webkit-slider-track {
+    background: #374151;
+    border-radius: 4px;
+    height: 4px;
+  }
+
+  .slider::-moz-range-track {
+    background: #374151;
+    border-radius: 4px;
+    height: 4px;
+  }
 }
 
 @keyframes glitch-animation {
