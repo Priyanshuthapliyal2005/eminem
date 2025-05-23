@@ -5,8 +5,8 @@ import DiscographyTimeline from './components/DiscographyTimeline';
 import Biography from './components/Biography';
 import AwardsWall from './components/AwardsWall';
 import SobrietySection from './components/SobrietySection';
-import FanHub from './components/FanHub';
-import MultimediaGallery from './components/MultimediaGallery';
+import FanHubEnhanced from './components/FanHub';
+import MultimediaGalleryEnhanced from './components/MultimediaGalleryEnhanced';
 import Footer from './components/Footer';
 import AudioPlayer from './components/AudioPlayer';
 import { Loader } from './components/Loader';
@@ -40,8 +40,8 @@ function App() {
           <Biography />
           <AwardsWall />
           <SobrietySection />
-          <FanHub />
-          <MultimediaGallery />
+          <FanHubEnhanced />
+          <MultimediaGalleryEnhanced />
         </main>
         <Footer />
         <AudioPlayer />

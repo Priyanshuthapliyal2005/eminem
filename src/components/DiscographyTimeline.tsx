@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Play, Calendar, Music, Award, ChevronRight, Headphones, Heart, Share2, Download, Star } from 'lucide-react';
+import { Play, Calendar, Music, Award, ChevronRight, Heart, Share2, Star } from 'lucide-react';
 
 // Album type definition
 interface Album {
@@ -287,9 +287,9 @@ const DiscographyTimeline: React.FC = () => {
                     }}
                   />
                 )}
-                      <span className="text-sm font-semibold">{album.year}</span>
-                    </div>
-                  </div>
+                
+                <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                  <span className="text-sm font-semibold">{album.year}</span>
                 </div>
                 
                 {/* Album stats */}
